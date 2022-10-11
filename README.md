@@ -15,13 +15,9 @@ Required: `ghc` and `stack`.
 The following configurations are available:
 
 * `runner2.stackPath`: path for `stack` executable (default `stack`)
-* `runner2.stackRepl`: use `stack repl` instead of `ghci`
-* `runner2.stackRun`: enable `stack run` button
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
+* `runner2.stackRepl`: use `stack repl` instead of `ghci` (default `false`)
+* `runner2.stackRun`: show `stack run` button (default `false`)
 
 ## Release Notes
 
-Check [ChangeLog](CHANGELOG.md).
+Please refer to [ChangeLog](CHANGELOG.md).

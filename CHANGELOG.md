@@ -6,7 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
-- `Void`
+- type fix
+- description update
 
 ## [0.1.1]
 

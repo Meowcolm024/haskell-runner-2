@@ -35,16 +35,16 @@ class None implements Option<any> {
         this.isEmpty = true;
     }
     unwrap<T>(this: None): T { throw new Error(); }
-    map<U>(this: Option<any>, f: (a: any) => U): Option<U> {
+    map<U>(this: None, f: (a: any) => U): Option<U> {
         return new None;
     }
-    flatmap<U>(this: Option<any>, f: (a: any) => Option<U>): Option<U> {
+    flatmap<U>(this: None, f: (a: any) => Option<U>): Option<U> {
         return new None;
     }
     contains(this: None, e: any): boolean {
         return false;
     }
-    orelse<T>(this: Some<T>, that: T): T {
+    orelse<T>(this: None, that: T): T {
         return that;
     }
 }

@@ -17,7 +17,7 @@ export function getConfig(): Config {
     let repl = getConfOption<boolean>("runner2.stackRepl", false);
     return {
         stackPath: stack,
-        ghciTool: repl ? stack + " repl" : "ghci",
+        ghciTool: repl ? (stack + " repl") : "ghci",
         enableStackRun: getConfOption<boolean>("runner2.stackRun", false)
     };
 }

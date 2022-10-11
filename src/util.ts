@@ -9,6 +9,7 @@ export function statButton(name: string, command: string, align = vscode.StatusB
     return stat;
 }
 
+// create a terminal and send command
 export function simplTerm(name: string, cmd: string) {
     return () => {
         let t = vscode.window.createTerminal(name);
@@ -17,6 +18,7 @@ export function simplTerm(name: string, cmd: string) {
     };
 }
 
+// is a haskell file
 export function isHaskell(text: vscode.TextDocument): boolean {
     return text.languageId === 'haskell' || text.languageId === 'literate haskell';
 }

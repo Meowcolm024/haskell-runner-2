@@ -5,6 +5,7 @@ import * as option from './option';
 import * as conf from './config';
 import * as util from './util';
 
+// configuration
 const config = conf.getConfig();
 
 var terminal: option.Option<vscode.Terminal> = option.none();
@@ -44,10 +45,8 @@ export async function activate(context: vscode.ExtensionContext) {
         "runner2.stacktest", util.simplTerm("Stack Test", "stack test")));
     context.subscriptions.push(vscode.commands.registerCommand(
         "runner2.stackbuild", util.simplTerm("Stack Build", "stack build")));
-    if (config.enableStackRun) {
-        context.subscriptions.push(vscode.commands.registerCommand(
-            "runner2.stackrun", util.simplTerm("Stack Run", "stack run")));
-    }
+    context.subscriptions.push(vscode.commands.registerCommand(
+        "runner2.stackrun", util.simplTerm("Stack Run", "stack run")));
 
     // button setup
     let stat = util.statButton("Load GHCi", "runner2.ghci");

@@ -3,7 +3,7 @@
 	"displayName": "Haskell Runner 2",
 	"description": "Shortcut for GHCi and Stack",
 	"publisher": "Meowcolm024",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"license": "BSD3",
 	"icon": "images/hr2.png",
 	"engines": {
@@ -62,7 +62,7 @@
 				"runner2.stackRun": {
 					"type": "boolean",
 					"default": false,
-					"description": "Enable stack run"
+					"description": "Show stack run button"
 				}
 			}
 		}
