@@ -2,6 +2,7 @@
   "name": "runner2",
 	"displayName": "Haskell Runner 2",
 	"description": "Haskell Runner remaked",
+	"publisher": "Meowcolm024",
 	"version": "0.1.0",
 	"license": "BSD3",
 	"icon": "images/hr2.png",
