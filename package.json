@@ -1,7 +1,7 @@
 {
 	"name": "runner2",
 	"displayName": "Haskell Runner 2",
-	"description": "Haskell Runner remaked",
+	"description": "Shortcut for GHCi and Stack",
 	"publisher": "Meowcolm024",
 	"version": "0.1.1",
 	"license": "BSD3",
