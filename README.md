@@ -18,6 +18,8 @@ The following configurations are available:
 * `runner2.stackRepl`: use `stack repl` instead of `ghci` (default `false`)
 * `runner2.stackRun`: show `stack run` button (default `false`)
 
+> You need to restart the extension after updating config
+
 ## Release Notes
 
 Please refer to [ChangeLog](CHANGELOG.md).

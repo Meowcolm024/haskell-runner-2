@@ -6,8 +6,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
-- type fix
-- description update
+- `Nil`
+
+## [0.1.2]
+
+- fix stack path issue
+- fix type
+- update description
 
 ## [0.1.1]
 

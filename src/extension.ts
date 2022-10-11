@@ -33,7 +33,7 @@ export async function activate(context: vscode.ExtensionContext) {
         } else {
             filename.map(f => {
                 let t = vscode.window.createTerminal("GHCi");
-                t.sendText(config.ghciTool + ' ' + (stackproj ? "" : f));
+                t.sendText(config.ghciTool + " " + (stackproj ? "" : f));
                 t.show();
             });
         }
@@ -42,15 +42,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
     // stack project commands
     context.subscriptions.push(vscode.commands.registerCommand(
-        "runner2.stacktest", util.simplTerm("Stack Test", "stack test")));
+        "runner2.stacktest", util.simplTerm("Stack Test", config.stackPath + " test")));
     context.subscriptions.push(vscode.commands.registerCommand(
-        "runner2.stackbuild", util.simplTerm("Stack Build", "stack build")));
+        "runner2.stackbuild", util.simplTerm("Stack Build", config.stackPath + " build")));
     context.subscriptions.push(vscode.commands.registerCommand(
-        "runner2.stackrun", util.simplTerm("Stack Run", "stack run")));
+        "runner2.stackrun", util.simplTerm("Stack Run", config.stackPath + " run")));
 
     // button setup
-    let stat = util.statButton("Load GHCi", "runner2.ghci");
-    context.subscriptions.push(stat);
+    context.subscriptions.push(util.statButton("Load GHCi", "runner2.ghci"));
     // button for stack project
     if (stackproj) {
         context.subscriptions.push(
