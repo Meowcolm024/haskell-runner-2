@@ -6,7 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
-- ???
+- `Void`
+
+## [0.1.1]
+
+- fix config
+- update GHCi
 
 ## [0.1.0]
 

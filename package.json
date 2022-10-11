@@ -1,9 +1,9 @@
 {
-  "name": "runner2",
+	"name": "runner2",
 	"displayName": "Haskell Runner 2",
 	"description": "Haskell Runner remaked",
 	"publisher": "Meowcolm024",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"license": "BSD3",
 	"icon": "images/hr2.png",
 	"engines": {
@@ -45,25 +45,25 @@
 				"title": "Stack Build",
 				"category": "Haskell Runner 2"
 			}
-		]
-	},
-	"configuration": {
-		"title": "Haskell Runner 2",
-		"properties": {
-			"runner2.stackPath": {
-				"type": "string",
-				"default": "stack",
-				"description": "Path to Stack"
-			},
-			"runner2.stackRepl": {
-				"type": "boolean",
-				"default": false,
-				"description": "Use stack repl instead of GHCi"
-			},
-			"runner2.stackRun": {
-				"type": "boolean",
-				"default": false,
-				"description": "Enable stack run"
+		],
+		"configuration": {
+			"title": "Haskell Runner 2",
+			"properties": {
+				"runner2.stackPath": {
+					"type": "string",
+					"default": "stack",
+					"description": "Path to Stack"
+				},
+				"runner2.stackRepl": {
+					"type": "boolean",
+					"default": false,
+					"description": "Use stack repl instead of GHCi"
+				},
+				"runner2.stackRun": {
+					"type": "boolean",
+					"default": false,
+					"description": "Enable stack run"
+				}
 			}
 		}
 	},
