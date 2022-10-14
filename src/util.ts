@@ -6,8 +6,8 @@ export function resgisterStatButton(
     name: string,
     command: string,
     align = vscode.StatusBarAlignment.Left,
-    priority = 10) {
-
+    priority = 10
+) {
     let stat = vscode.window.createStatusBarItem(align, priority);
     stat.text = name;
     stat.command = command;
@@ -18,9 +18,9 @@ export function resgisterStatButton(
 // create a terminal and send command
 export function registerSimplTerm(context: vscode.ExtensionContext, command: string, name: string, cmd: string) {
     context.subscriptions.push(vscode.commands.registerCommand(command, () => {
-        let t = vscode.window.createTerminal(name);
-        t.sendText(cmd);
-        t.show();
+        let term = vscode.window.createTerminal(name);
+        term.sendText(cmd);
+        term.show();
     }));
 }
 

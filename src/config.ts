@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import * as option from './option';
 
 export type Config = {
     stackPath: string,
@@ -9,14 +8,11 @@ export type Config = {
 
 export function getConfig(): Config {
     const config = vscode.workspace.getConfiguration();
-    function getConfOption<T>(name: string, def: T): T {
-        return option.option<T>(config.get(name)).orelse(def);
-    }
-    let stack = getConfOption("runner2.stackPath", "stack");
-    let repl = getConfOption("runner2.stackRepl", false);
+    let stack = config.get("runner2.stackPath", "stack");
+    let repl = config.get("runner2.stackRepl", false);
     return {
         stackPath: stack,
         ghciTool: repl ? (stack + " repl") : "ghci",
-        enableStackRun: getConfOption("runner2.stackRun", false)
+        enableStackRun: config.get("runner2.stackRun", false)
     };
 }
