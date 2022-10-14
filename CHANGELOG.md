@@ -8,6 +8,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - fix typo
 - use absolute path for GHCi
+- add activation event (in a stack project)
 
 ## [0.1.2]
 

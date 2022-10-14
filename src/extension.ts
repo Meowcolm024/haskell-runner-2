@@ -55,7 +55,8 @@ export async function activate(context: vscode.ExtensionContext) {
             util.statButton("Stack Test", "runner2.stacktest")
         );
         if (config.enableStackRun) {
-            context.subscriptions.push(util.statButton("Stack Run", "runner2.stackrun"));
+            context.subscriptions.push(
+                util.statButton("Stack Run", "runner2.stackrun"));
         }
     }
 
