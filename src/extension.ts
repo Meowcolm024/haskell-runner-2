@@ -21,13 +21,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
     // GHCi command
     let ghci = vscode.commands.registerCommand("runner2.ghci", () => {
-        let folder = option.option(vscode.workspace.workspaceFolders);
         let doc = option.option(vscode.window.activeTextEditor).map(e => e.document);
-        let filename =
-            folder.flatmap(f => doc
-                .flatmap(d => util.isHaskell(d) ? option.some(d) : option.none<vscode.TextDocument>())
-                .map(d => d.fileName.replace(f[0].uri.path + "/", ""))
-                .map(s => `\"${s}\"`));
+        let filename = doc
+            .flatmap(d => util.isHaskell(d) ? option.some(d) : option.none<vscode.TextDocument>())
+            .map(s => `\"${s.fileName}\"`);
+        // currently at GHCi
         if (terminal.map(t => t.name).contains("GHCi")) {
             filename.map(f => terminal.unwrap().sendText(stackproj ? ":r" : (":l " + f)));
         } else {

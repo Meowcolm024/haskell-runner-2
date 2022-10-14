@@ -3,7 +3,7 @@
     "displayName": "Haskell Runner 2",
     "description": "Shortcut for GHCi and Stack",
     "publisher": "Meowcolm024",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "license": "BSD3",
     "icon": "images/hr2.png",
     "engines": {

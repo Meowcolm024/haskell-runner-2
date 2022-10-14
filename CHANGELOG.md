@@ -7,6 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - fix typo
+- use absolute path for GHCi
 
 ## [0.1.2]
 
