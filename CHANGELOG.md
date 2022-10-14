@@ -9,6 +9,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - fix typo
 - use absolute path for GHCi
 - add activation event (in a stack project)
+- change behavior of `Load GHCi` when not in a Haskell file
 
 ## [0.1.2]
 

@@ -29,6 +29,7 @@ class Some<T> implements Option<T> {
     }
 }
 
+// note: it should be Option[Nothing] instead of Option[Any]
 class None implements Option<any> {
     isEmpty: boolean;
     constructor() {
@@ -63,4 +64,8 @@ export function some<T>(u: T): Option<T> {
 
 export function none<T>(): Option<T> {
     return new None;
+}
+
+export function filterOption<T>(p: (v: T) => Boolean, v: T): Option<T> {
+    return p(v) ? new Some(v) : new None;
 }

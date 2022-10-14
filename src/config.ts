@@ -12,12 +12,11 @@ export function getConfig(): Config {
     function getConfOption<T>(name: string, def: T): T {
         return option.option<T>(config.get(name)).orelse(def);
     }
-
-    let stack = getConfOption<string>("runner2.stackPath", "stack");
-    let repl = getConfOption<boolean>("runner2.stackRepl", false);
+    let stack = getConfOption("runner2.stackPath", "stack");
+    let repl = getConfOption("runner2.stackRepl", false);
     return {
         stackPath: stack,
         ghciTool: repl ? (stack + " repl") : "ghci",
-        enableStackRun: getConfOption<boolean>("runner2.stackRun", false)
+        enableStackRun: getConfOption("runner2.stackRun", false)
     };
 }
