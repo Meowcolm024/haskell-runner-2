@@ -8,11 +8,12 @@ export type Config = {
 
 export function getConfig(): Config {
     const config = vscode.workspace.getConfiguration();
+    let ghci = config.get("runner2.ghciPath", "ghci");
     let stack = config.get("runner2.stackPath", "stack");
     let repl = config.get("runner2.stackRepl", false);
     return {
         stackPath: stack,
-        ghciTool: repl ? (stack + " repl") : "ghci",
+        ghciTool: repl ? (stack + " repl") : ghci,
         enableStackRun: config.get("runner2.stackRun", false)
     };
 }

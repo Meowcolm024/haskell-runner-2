@@ -16,7 +16,6 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.window.onDidChangeActiveTerminal(e => { terminal = option.option(e); });
     // update config
     vscode.workspace.onDidChangeConfiguration(e => { config = conf.getConfig(); });
-
     // check stack project
     let stackproj = (await vscode.workspace.findFiles("stack.yaml")).length > 0;
 

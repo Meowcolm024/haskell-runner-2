@@ -16,7 +16,12 @@ export function resgisterStatButton(
 }
 
 // create a terminal and send command
-export function registerSimplTerm(context: vscode.ExtensionContext, command: string, name: string, cmd: string) {
+export function registerSimplTerm(
+    context: vscode.ExtensionContext,
+    command: string,
+    name: string,
+    cmd: string
+) {
     context.subscriptions.push(vscode.commands.registerCommand(command, () => {
         let term = vscode.window.createTerminal(name);
         term.sendText(cmd);
