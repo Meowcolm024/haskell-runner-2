@@ -8,6 +8,7 @@ A simple extension to run Haskell:
 
 * Load Haskell file/project to repl (GHCi)
 * Run `stack build/test/run` inside a stack project
+* Send selected Haskell code to GHCi
 
 ## Requirements
 

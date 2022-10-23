@@ -4,7 +4,8 @@ All notable changes to the *Haskell Runner 2* will be documented in this file.
 
 ## [Unreleased]
 
-- support for ghci path
+- support for custom ghci path
+- support for sending selected code to ghci
 
 ## [0.1.3]
 

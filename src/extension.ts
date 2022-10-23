@@ -36,6 +36,26 @@ export async function activate(context: vscode.ExtensionContext) {
     });
     context.subscriptions.push(ghci);
 
+    // send selected code to GHCi
+    let sendGhci = vscode.commands.registerCommand("runner2.sendGhci", () =>
+        option.option(vscode.window.activeTextEditor)
+            .map(e => e.document.getText(
+                new vscode.Range(e.selection.start, e.selection.end)))
+            .flatmap(s => option.filterOption(x => x.trim() !== "", s))
+            .map(s => ":{\n" + s + "\n:}\n")
+            .map(s => {
+                if (terminal.map(t => t.name).contains("GHCi")) {
+                    terminal.unwrap().sendText(s);
+                } else {
+                    let term = vscode.window.createTerminal("GHCi");    // new terminal for ghci
+                    term.sendText(config.ghciTool);
+                    term.sendText(s);
+                    term.show();
+                }
+            })
+    );
+    context.subscriptions.push(sendGhci);
+
     // stack project commands
     util.registerSimplTerm(context, "runner2.stacktest", "Stack Test", config.stackPath + " test");
     util.registerSimplTerm(context, "runner2.stackbuild", "Stack Build", config.stackPath + " build");

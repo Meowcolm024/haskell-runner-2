@@ -45,6 +45,11 @@
                 "command": "runner2.stackrun",
                 "title": "Stack Run",
                 "category": "Haskell Runner 2"
+            },
+            {
+                "command": "runner2.sendGhci",
+                "title": "Send to GHCi",
+                "category": "Haskell Runner 2"
             }
         ],
         "configuration": {
@@ -71,6 +76,21 @@
                     "description": "Show stack run button"
                 }
             }
+        },
+        "menus": {
+            "editor/context": [
+                {
+                    "when": "resourceLangId == haskell",
+                    "command": "runner2.sendGhci",
+                    "group": "z_commands"
+                }
+            ],
+            "commandPalette": [
+                {
+                    "command": "runner2.sendGhci",
+                    "when": "resourceLangId == haskell"
+                }
+            ]
         }
     },
     "scripts": {
