@@ -6,7 +6,7 @@ All notable changes to the *Haskell Runner 2* will be documented in this file.
 
 - support for custom ghci path
 - support for sending selected code to ghci
-- add keybindings for *sendGhci* (`ctrl+alt+right`)
+- add keybindings for `Send to GHCi` (shortcut: `ctrl+alt+right`)
 
 ## [0.1.3]
 

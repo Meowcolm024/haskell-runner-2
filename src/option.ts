@@ -29,17 +29,16 @@ class Some<T> implements Option<T> {
     }
 }
 
-// note: it should be Option[Nothing] instead of Option[Any]
-class None implements Option<any> {
+class None implements Option<never> {
     isEmpty: boolean;
     constructor() {
         this.isEmpty = true;
     }
-    unwrap<T>(this: None): T { throw new Error(); }
-    map<U>(this: None, f: (a: any) => U): Option<U> {
+    unwrap(this: None): never { throw new Error(); }
+    map<U>(this: None, f: (a: never) => U): Option<U> {
         return new None;
     }
-    flatmap<U>(this: None, f: (a: any) => Option<U>): Option<U> {
+    flatmap<U>(this: None, f: (a: never) => Option<U>): Option<U> {
         return new None;
     }
     contains(this: None, e: any): boolean {
