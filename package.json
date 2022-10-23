@@ -3,7 +3,7 @@
     "displayName": "Haskell Runner 2",
     "description": "Shortcut for GHCi and Stack",
     "publisher": "Meowcolm024",
-    "version": "0.1.4",
+    "version": "0.2.0",
     "license": "BSD3",
     "icon": "images/hr2.png",
     "engines": {
@@ -91,7 +91,15 @@
                     "when": "resourceLangId == haskell"
                 }
             ]
-        }
+        },
+        "keybindings": [
+            {
+              "command": "runner2.sendGhci",
+              "key": "ctrl+alt+right",
+              "mac": "ctrl+alt+right",
+              "when": "resourceLangId == haskell"
+            }
+          ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

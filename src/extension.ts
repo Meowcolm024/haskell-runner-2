@@ -42,13 +42,13 @@ export async function activate(context: vscode.ExtensionContext) {
             .map(e => e.document.getText(
                 new vscode.Range(e.selection.start, e.selection.end)))
             .flatmap(s => option.filterOption(x => x.trim() !== "", s))
-            .map(s => ":{\n" + s + "\n:}\n")
+            .map(s => ":{\n" + s + "\n:}\n")            // in case of multi-line selection
             .map(s => {
                 if (terminal.map(t => t.name).contains("GHCi")) {
                     terminal.unwrap().sendText(s);
                 } else {
-                    let term = vscode.window.createTerminal("GHCi");    // new terminal for ghci
-                    term.sendText(config.ghciTool);
+                    let term = vscode.window.createTerminal("GHCi");
+                    term.sendText(config.ghciTool);     // we're not loading the file here
                     term.sendText(s);
                     term.show();
                 }
