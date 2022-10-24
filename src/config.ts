@@ -14,7 +14,7 @@ export function getConfig(): Config {
     const config = vscode.workspace.getConfiguration();
     const ghci = config.get("runner2.ghciPath", "ghci");
     const stack = config.get("runner2.stackPath", "stack");
-    const mode = config.get<Mode>("runner2.stackRepl", "default");
+    const mode = config.get<Mode>("runner2.replTool", "default");
     let tool = (proj: boolean) => {
         let repl = stack + " repl";
         switch (mode) {

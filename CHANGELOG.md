@@ -8,6 +8,7 @@ All notable changes to the *Haskell Runner 2* will be documented in this file.
 - support for sending selected code to ghci
 - add keybindings for `Send to GHCi` (shortcut: `ctrl+alt+right`)
 - allow dynamically choose tool for `ghci`
+- rename config `stackRepl` to `replTool`
 
 ## [0.1.3]
 

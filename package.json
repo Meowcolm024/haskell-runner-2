@@ -65,7 +65,7 @@
                     "default": "stack",
                     "description": "Path to stack executable"
                 },
-                "runner2.stackRepl": {
+                "runner2.replTool": {
                     "type": "string",
                     "enum": [
                         "default",
