@@ -66,9 +66,14 @@
                     "description": "Path to stack executable"
                 },
                 "runner2.stackRepl": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Use stack repl instead of GHCi"
+                    "type": "string",
+                    "enum": [
+                        "default",
+                        "ghci",
+                        "stack"
+                    ],
+                    "default": "default",
+                    "description": "Decide when to use stack repl instead of GHCi"
                 },
                 "runner2.stackRun": {
                     "type": "boolean",

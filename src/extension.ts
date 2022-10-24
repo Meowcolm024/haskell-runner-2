@@ -30,7 +30,7 @@ export async function activate(context: vscode.ExtensionContext) {
             filename.map(f => terminal.unwrap().sendText(stackproj ? ":r" : (":l " + f)));
         } else {
             let term = vscode.window.createTerminal("GHCi");
-            term.sendText(config.ghciTool + " " + (stackproj ? "" : filename.orelse("")));
+            term.sendText(config.ghciTool(stackproj) + " " + (stackproj ? "" : filename.orelse("")));
             term.show();
         }
     });
@@ -48,7 +48,7 @@ export async function activate(context: vscode.ExtensionContext) {
                     terminal.unwrap().sendText(s);
                 } else {
                     let term = vscode.window.createTerminal("GHCi");
-                    term.sendText(config.ghciTool);     // we're not loading the file here
+                    term.sendText(config.ghciTool(stackproj));     // we're not loading the file here
                     term.sendText(s);
                     term.show();
                 }

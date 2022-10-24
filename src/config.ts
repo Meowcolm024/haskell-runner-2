@@ -1,19 +1,33 @@
 import * as vscode from 'vscode';
 
+export type Mode = "default" | "ghci" | "stack";
+
 export type Config = {
+    mode: Mode,
+    ghciPath: string,
     stackPath: string,
-    ghciTool: string,
+    ghciTool: (proj: boolean) => string,
     enableStackRun: boolean,
 };
 
 export function getConfig(): Config {
     const config = vscode.workspace.getConfiguration();
-    let ghci = config.get("runner2.ghciPath", "ghci");
-    let stack = config.get("runner2.stackPath", "stack");
-    let repl = config.get("runner2.stackRepl", false);
+    const ghci = config.get("runner2.ghciPath", "ghci");
+    const stack = config.get("runner2.stackPath", "stack");
+    const mode = config.get<Mode>("runner2.stackRepl", "default");
+    let tool = (proj: boolean) => {
+        let repl = stack + " repl";
+        switch (mode) {
+            case "default": return proj ? repl : ghci;
+            case "ghci": return ghci;
+            case "stack": return repl;
+        }
+    };
     return {
+        mode: mode,
+        ghciPath: ghci,
         stackPath: stack,
-        ghciTool: repl ? (stack + " repl") : ghci,
+        ghciTool: tool,
         enableStackRun: config.get("runner2.stackRun", false)
     };
 }
