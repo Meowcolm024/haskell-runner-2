@@ -27,7 +27,9 @@ export async function activate(context: vscode.ExtensionContext) {
             .map(s => `\"${s.fileName}\"`);
         // currently at GHCi
         if (terminal.map(t => t.name).contains("GHCi")) {
-            filename.map(f => terminal.unwrap().sendText(stackproj ? ":r" : (":l " + f)));
+            filename
+                .map(f => f.split("\\").join("\\\\"))   // windows path may caontain backslash
+                .map(f => terminal.unwrap().sendText(stackproj ? ":r" : (":l " + f)));
         } else {
             let term = vscode.window.createTerminal("GHCi");
             term.sendText(config.ghciTool(stackproj) + " " + (stackproj ? "" : filename.orelse("")));
