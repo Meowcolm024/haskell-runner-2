@@ -28,7 +28,7 @@ export async function activate(context: vscode.ExtensionContext) {
         // currently at GHCi
         if (terminal.map(t => t.name).contains("GHCi")) {
             filename
-                .map(f => f.split("\\").join("\\\\"))   // windows path may caontain backslash
+                .map(f => f.split("\\").join("\\\\"))   // windows path may contain backslash
                 .map(f => terminal.unwrap().sendText(stackproj ? ":r" : (":l " + f)));
         } else {
             let term = vscode.window.createTerminal("GHCi");

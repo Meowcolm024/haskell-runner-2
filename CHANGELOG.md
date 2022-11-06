@@ -4,6 +4,8 @@ All notable changes to the *Haskell Runner 2* will be documented in this file.
 
 ## [Unreleased]
 
+## [0.2.1]
+
 - fix potential path issue in Windows
 
 ## [0.2.0]
