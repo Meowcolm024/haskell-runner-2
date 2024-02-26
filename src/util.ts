@@ -29,6 +29,17 @@ export function registerSimplTerm(
     }));
 }
 
+// prompt error message
+export function registerPrompt(
+    context: vscode.ExtensionContext,
+    command: string,
+    msg: string,
+) {
+    context.subscriptions.push(vscode.commands.registerCommand(command,
+        () => vscode.window.showErrorMessage(msg)
+    ));
+}
+
 // is a haskell file
 export function isHaskell(text: vscode.TextDocument): boolean {
     return text.languageId === 'haskell' || text.languageId === 'literate haskell';

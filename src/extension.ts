@@ -16,8 +16,10 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.window.onDidChangeActiveTerminal(e => { terminal = option.option(e); });
     // update config
     vscode.workspace.onDidChangeConfiguration(e => { config = conf.getConfig(); });
-    // check stack project
-    let stackproj = (await vscode.workspace.findFiles("stack.yaml")).length > 0;
+    // check stack/cabal project
+    let hasConf = async (f: string) =>  (await vscode.workspace.findFiles(f)).length > 0;
+    let project: conf.ProjectTy = (await hasConf("stack.yaml")) ? "stack" : (await hasConf("*.cabal") ? "cabal" : "none");
+    let inproject = project !== "none";
 
     // GHCi command
     let ghci = vscode.commands.registerCommand("runner2.ghci", () => {
@@ -29,10 +31,10 @@ export async function activate(context: vscode.ExtensionContext) {
         if (terminal.map(t => t.name).contains("GHCi")) {
             filename
                 .map(f => f.split("\\").join("\\\\"))   // windows path may contain backslash
-                .map(f => terminal.unwrap().sendText(stackproj ? ":r" : (":l " + f)));
+                .map(f => terminal.unwrap().sendText(inproject ? ":r" : (":l " + f)));
         } else {
             let term = vscode.window.createTerminal("GHCi");
-            term.sendText(config.ghciTool(stackproj) + " " + (stackproj ? "" : filename.orelse("")));
+            term.sendText(config.ghciTool(project) + " " + (inproject ? "" : filename.orelse("")));
             term.show();
         }
     });
@@ -50,29 +52,37 @@ export async function activate(context: vscode.ExtensionContext) {
                     terminal.unwrap().sendText(s);
                 } else {
                     let term = vscode.window.createTerminal("GHCi");
-                    term.sendText(config.ghciTool(stackproj));     // we're not loading the file here
+                    term.sendText(config.ghciTool(project));     // we're not loading the file here
                     term.sendText(s);
                     term.show();
                 }
             })
     );
     context.subscriptions.push(sendGhci);
-
-    // stack project commands
-    util.registerSimplTerm(context, "runner2.stacktest", "Stack Test", config.stackPath + " test");
-    util.registerSimplTerm(context, "runner2.stackbuild", "Stack Build", config.stackPath + " build");
-    util.registerSimplTerm(context, "runner2.stackrun", "Stack Run", config.stackPath + " run");
-
-    // button setup
+    
+    // button for ghci
     util.resgisterStatButton(context, "Load GHCi", "runner2.ghci");
     // button for stack project
-    if (stackproj) {
-        util.resgisterStatButton(context, "Stack Build", "runner2.stackbuild");
-        util.resgisterStatButton(context, "Stack Test", "runner2.stacktest");
-        if (config.enableStackRun) {
-            util.resgisterStatButton(context, "Stack Run", "runner2.stackrun");
-        }
+    switch (project) {
+        case 'stack':
+            // setup commands
+            util.registerSimplTerm(context, "runner2.stacktest", "Stack Test", config.stackPath + " test");
+            util.registerSimplTerm(context, "runner2.stackbuild", "Stack Build", config.stackPath + " build");
+            util.registerSimplTerm(context, "runner2.stackrun", "Stack Run", config.stackPath + " run");
+            // setup buttons
+            util.resgisterStatButton(context, "Stack Build", "runner2.stackbuild");
+            util.resgisterStatButton(context, "Stack Test", "runner2.stacktest");
+            if (config.enableStackRun) {
+                util.resgisterStatButton(context, "Stack Run", "runner2.stackrun");
+            }
+            break;
+        default:
+            // default behavior
+            util.registerPrompt(context, "runner2.stacktest", "Not in a stack project!");
+            util.registerPrompt(context, "runner2.stackbuild", "Not in a stack project!");
+            util.registerPrompt(context, "runner2.stackrun", "Not in a stack project!");
     }
+
 }
 
 // this method is called when your extension is deactivated

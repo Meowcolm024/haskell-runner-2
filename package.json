@@ -3,7 +3,7 @@
     "displayName": "Haskell Runner 2",
     "description": "Shortcut for GHCi and Stack",
     "publisher": "Meowcolm024",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "license": "BSD3",
     "icon": "images/hr2.png",
     "engines": {
@@ -65,15 +65,21 @@
                     "default": "stack",
                     "description": "Path to stack executable"
                 },
+                "runner2.cabalPath": {
+                    "type": "string",
+                    "default": "cabal",
+                    "description": "Path to cabal executable"
+                },
                 "runner2.replTool": {
                     "type": "string",
                     "enum": [
                         "default",
                         "ghci",
-                        "stack"
+                        "stack",
+                        "cabal"
                     ],
                     "default": "default",
-                    "description": "Decide when to use stack repl instead of GHCi"
+                    "description": "Decide when to use stack/cabal repl instead of GHCi"
                 },
                 "runner2.stackRun": {
                     "type": "boolean",

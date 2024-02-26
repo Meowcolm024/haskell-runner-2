@@ -4,6 +4,12 @@ All notable changes to the *Haskell Runner 2* will be documented in this file.
 
 ## [Unreleased]
 
+- TODO: support `cabal build` and `cabal test`
+
+## [0.2.2]
+
+- added `cabal repl` support in cabal project
+
 ## [0.2.1]
 
 - fix potential path issue in Windows
