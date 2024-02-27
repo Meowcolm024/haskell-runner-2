@@ -1,14 +1,17 @@
 import * as vscode from 'vscode';
 
-export type Mode = "default" | "ghci" | "stack" | "cabal";
+// only used by config
+type Mode = "default" | "ghci" | "stack" | "cabal";
+// type of current project
 export type ProjectTy = "none" | "stack" | "cabal";
 
 export type Config = {
     mode: Mode,
     ghciPath: string,
     stackPath: string,
+    cabalPath: string,
     ghciTool: (proj: ProjectTy) => string,
-    enableStackRun: boolean,
+    showRun: boolean,
 };
 
 export function getConfig(): Config {
@@ -34,7 +37,8 @@ export function getConfig(): Config {
         mode: mode,
         ghciPath: ghci,
         stackPath: stack,
+        cabalPath: cabal,
         ghciTool: tool,
-        enableStackRun: config.get("runner2.stackRun", false)
+        showRun: config.get("runner2.showRunButton", false)
     };
 }

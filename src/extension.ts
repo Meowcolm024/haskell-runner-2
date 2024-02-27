@@ -22,14 +22,15 @@ export async function activate(context: vscode.ExtensionContext) {
     let inproject = project !== "none";
 
     // GHCi command
-    let ghci = vscode.commands.registerCommand("runner2.ghci", () => {
+    const ghci = vscode.commands.registerCommand("runner2.ghci", () => {
+        // get current file name
         let filename = option.option(vscode.window.activeTextEditor)
             .map(e => e.document)
             .flatmap(option.filterOption(util.isHaskell))
             .map(s => `\"${s.fileName}\"`);
         // currently at GHCi
         const term = terminal.flatmap(option.filterOption(t => t.name === "GHCi"))
-            .or(util.getTermOption("GHCi")).map((term) => () => {
+            .or(util.getTermOption("GHCi")).map(term => () => {
                 filename
                     .map(f => f.split("\\").join("\\\\"))   // windows path may contain backslash
                     .map(f => term.sendText(inproject ? ":r" : (":l " + f)));
@@ -44,7 +45,7 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(ghci);
 
     // send selected code to GHCi
-    let sendGhci = vscode.commands.registerCommand("runner2.sendGhci", () =>
+    const sendGhci = vscode.commands.registerCommand("runner2.sendGhci", () =>
         option.option(vscode.window.activeTextEditor)
             .map(e => e.document.getText(
                 new vscode.Range(e.selection.start, e.selection.end)))
@@ -53,7 +54,7 @@ export async function activate(context: vscode.ExtensionContext) {
             .map(s => {
                 const term = terminal.flatmap(option.filterOption(t => t.name === "GHCi"))
                     .or(util.getTermOption("GHCi")).map(term => () => term).orelse(() => {
-                        let term = util.getTermOption("GHCi").orelse(vscode.window.createTerminal("GHCi"));
+                        let term = vscode.window.createTerminal("GHCi");
                         term.sendText(config.ghciTool(project));     // we're not loading the file here
                         return term;
                     })();
@@ -65,25 +66,32 @@ export async function activate(context: vscode.ExtensionContext) {
 
     // button for ghci
     util.resgisterStatButton(context, "Load GHCi", "runner2.ghci");
-    // button for stack project
+
+    const setupProject = (project: string, path: string) => {
+        // setup commands
+        util.registerSimplTerm(context, "runner2.hstest", project + " Test", path + " test");
+        util.registerSimplTerm(context, "runner2.hsbuild", project + " Build", path + " build");
+        util.registerSimplTerm(context, "runner2.hsrun", project + " Run", path + " run");
+        // setup buttons
+        util.resgisterStatButton(context, project + " Build", "runner2.hsbuild");
+        util.resgisterStatButton(context, project + " Test", "runner2.hstest");
+        if (config.showRun) {
+            util.resgisterStatButton(context, project + " Run", "runner2.hsrun");
+        }
+    };
+
     switch (project) {
         case "stack":
-            // setup commands
-            util.registerSimplTerm(context, "runner2.stacktest", "Stack Test", config.stackPath + " test");
-            util.registerSimplTerm(context, "runner2.stackbuild", "Stack Build", config.stackPath + " build");
-            util.registerSimplTerm(context, "runner2.stackrun", "Stack Run", config.stackPath + " run");
-            // setup buttons
-            util.resgisterStatButton(context, "Stack Build", "runner2.stackbuild");
-            util.resgisterStatButton(context, "Stack Test", "runner2.stacktest");
-            if (config.enableStackRun) {
-                util.resgisterStatButton(context, "Stack Run", "runner2.stackrun");
-            }
+            setupProject("Stack", config.stackPath);
             break;
-        default:
-            // default behavior
-            util.registerPrompt(context, "runner2.stacktest", "Not in a stack project!");
-            util.registerPrompt(context, "runner2.stackbuild", "Not in a stack project!");
-            util.registerPrompt(context, "runner2.stackrun", "Not in a stack project!");
+        case "cabal":
+            setupProject("Cabal", config.cabalPath);
+            break;
+        case "none": // default behavior
+            util.registerPrompt(context, "runner2.hstest", "Not in a stack/cabal project!");
+            util.registerPrompt(context, "runner2.hsbuild", "Not in a stack/cabal project!");
+            util.registerPrompt(context, "runner2.hsrun", "Not in a stack/cabal project!");
+            break;
     }
 
 }

@@ -34,7 +34,9 @@ export function registerSimplTerm(
     cmd: string
 ) {
     context.subscriptions.push(vscode.commands.registerCommand(command, () => {
-        let term = getTermOption(name).orelse(vscode.window.createTerminal(name));
+        let term = getTermOption(name)
+            .map(t => () => t)  // new terminal need to be created lazily
+            .orelse(() => vscode.window.createTerminal(name))();    
         term.sendText(cmd);
         term.show();
     }));

@@ -3,7 +3,7 @@
     "displayName": "Haskell Runner 2",
     "description": "Shortcut for GHCi and Stack",
     "publisher": "Meowcolm024",
-    "version": "0.2.2",
+    "version": "0.3.0",
     "license": "BSD3",
     "icon": "images/hr2.png",
     "engines": {
@@ -22,7 +22,7 @@
         "onLanguage:literate haskell",
         "onLanguage:cabal",
         "workspaceContains:stack.yaml",
-        "onCommand:runner2.ghci"
+        "workspaceContains:*.cabal"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -33,18 +33,18 @@
                 "category": "Haskell Runner 2"
             },
             {
-                "command": "runner2.stacktest",
-                "title": "Stack Test",
+                "command": "runner2.hstest",
+                "title": "Haskell Run Tests",
                 "category": "Haskell Runner 2"
             },
             {
-                "command": "runner2.stackbuild",
-                "title": "Stack Build",
+                "command": "runner2.hsbuild",
+                "title": "Haskell Build Project",
                 "category": "Haskell Runner 2"
             },
             {
-                "command": "runner2.stackrun",
-                "title": "Stack Run",
+                "command": "runner2.hsrun",
+                "title": "Haskell Run Executable",
                 "category": "Haskell Runner 2"
             },
             {
@@ -82,10 +82,10 @@
                     "default": "default",
                     "description": "Decide when to use stack/cabal repl instead of GHCi"
                 },
-                "runner2.stackRun": {
+                "runner2.showRunButton": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Show stack run button"
+                    "description": "Show stack/cabal run button"
                 }
             }
         },
@@ -109,6 +109,7 @@
               "command": "runner2.sendGhci",
               "key": "ctrl+alt+right",
               "mac": "ctrl+alt+right",
+              "linux": "ctrl+alt+right",
               "when": "resourceLangId == haskell"
             }
           ]
