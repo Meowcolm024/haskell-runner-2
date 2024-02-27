@@ -1,4 +1,15 @@
 import * as vscode from 'vscode';
+import * as option from './option';
+
+// get/new terminal
+export function getTermOption(name: string): option.Option<vscode.Terminal> {
+    let idx = vscode.window.terminals.findIndex((term) => term.name === name);
+    if (idx === -1) {
+        return option.none();
+    } else {
+        return option.some(vscode.window.terminals[idx]);
+    }
+}
 
 // create status bar button
 export function resgisterStatButton(
@@ -23,7 +34,7 @@ export function registerSimplTerm(
     cmd: string
 ) {
     context.subscriptions.push(vscode.commands.registerCommand(command, () => {
-        let term = vscode.window.createTerminal(name);
+        let term = getTermOption(name).orelse(vscode.window.createTerminal(name));
         term.sendText(cmd);
         term.show();
     }));

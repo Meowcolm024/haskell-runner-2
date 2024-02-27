@@ -5,6 +5,7 @@ export interface Option<T> {
     flatmap<U>(this: Option<T>, f: (a: T) => Option<U>): Option<U>;
     contains(this: Option<T>, e: T): boolean;
     orelse(this: Option<T>, that: T): T;
+    or(this: Option<T>, that: Option<T>): Option<T>;
 }
 
 class Some<T> implements Option<T> {
@@ -27,6 +28,9 @@ class Some<T> implements Option<T> {
     orelse(this: Some<T>, that: T): T {
         return this.value;
     }
+    or(this: Some<T>, that: Option<T>): Some<T> {
+        return this;
+    }
 }
 
 class None implements Option<never> {
@@ -47,6 +51,9 @@ class None implements Option<never> {
     orelse<T>(this: None, that: T): T {
         return that;
     }
+    or<T>(this: None, that: Option<T>): Option<T> {
+        return that;
+    }
 }
 
 export function option<T>(u: T | undefined): Option<T> {
@@ -65,6 +72,6 @@ export function none<T>(): Option<T> {
     return new None;
 }
 
-export function filterOption<T>(p: (v: T) => Boolean, v: T): Option<T> {
-    return p(v) ? new Some(v) : new None;
+export function filterOption<T>(p: (v: T) => Boolean): (v: T) => Option<T> {
+    return v => p(v) ? new Some(v) : new None;
 }

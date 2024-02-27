@@ -12,7 +12,7 @@ A simple extension to run Haskell:
 
 ## Requirements
 
-Required: `ghc` and `stack`.
+Required: `ghc`, `cabal` and `stack`.
 
 ## Extension Settings
 
@@ -20,7 +20,8 @@ The following configurations are available:
 
 - `runner2.ghciPath`: path for GHCi (default `ghci`)
 - `runner2.stackPath`: path for stack executable (default `stack`)
-- `runner2.replTool`: by `default`, it use `ghci` in single file and use `stack repl` in stack project. This can be overridden by choosing other options (`ghci` for ghci only, and `stack` for stack repl only)
+- `runner2.cabalPath`: path for cabal executable (default `cabal`)
+- `runner2.replTool`: by `default`, it use `ghci` in single file and use `stack repl` (or `cabal repl`) in stack project. This can be overridden by choosing other options (`ghci` for ghci only, and `stack` (or `cabal`) for stack/cabal repl only)
 - `runner2.stackRun`: show "Stack Run" button, *reload required* (default `false`)
 
 ## Release Notes

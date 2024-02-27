@@ -17,7 +17,7 @@ export async function activate(context: vscode.ExtensionContext) {
     // update config
     vscode.workspace.onDidChangeConfiguration(e => { config = conf.getConfig(); });
     // check stack/cabal project
-    let hasConf = async (f: string) =>  (await vscode.workspace.findFiles(f)).length > 0;
+    let hasConf = async (f: string) => (await vscode.workspace.findFiles(f)).length > 0;
     let project: conf.ProjectTy = (await hasConf("stack.yaml")) ? "stack" : (await hasConf("*.cabal") ? "cabal" : "none");
     let inproject = project !== "none";
 
@@ -25,18 +25,21 @@ export async function activate(context: vscode.ExtensionContext) {
     let ghci = vscode.commands.registerCommand("runner2.ghci", () => {
         let filename = option.option(vscode.window.activeTextEditor)
             .map(e => e.document)
-            .flatmap(d => option.filterOption(util.isHaskell, d))
+            .flatmap(option.filterOption(util.isHaskell))
             .map(s => `\"${s.fileName}\"`);
         // currently at GHCi
-        if (terminal.map(t => t.name).contains("GHCi")) {
-            filename
-                .map(f => f.split("\\").join("\\\\"))   // windows path may contain backslash
-                .map(f => terminal.unwrap().sendText(inproject ? ":r" : (":l " + f)));
-        } else {
-            let term = vscode.window.createTerminal("GHCi");
-            term.sendText(config.ghciTool(project) + " " + (inproject ? "" : filename.orelse("")));
-            term.show();
-        }
+        const term = terminal.flatmap(option.filterOption(t => t.name === "GHCi"))
+            .or(util.getTermOption("GHCi")).map((term) => () => {
+                filename
+                    .map(f => f.split("\\").join("\\\\"))   // windows path may contain backslash
+                    .map(f => term.sendText(inproject ? ":r" : (":l " + f)));
+                return term;
+            }).orelse(() => {
+                let term = vscode.window.createTerminal("GHCi");
+                term.sendText(config.ghciTool(project) + " " + (inproject ? "" : filename.orelse("")));
+                return term;
+            });
+        term().show();
     });
     context.subscriptions.push(ghci);
 
@@ -45,26 +48,26 @@ export async function activate(context: vscode.ExtensionContext) {
         option.option(vscode.window.activeTextEditor)
             .map(e => e.document.getText(
                 new vscode.Range(e.selection.start, e.selection.end)))
-            .flatmap(s => option.filterOption(x => x.trim() !== "", s))
+            .flatmap(option.filterOption(x => x.trim() !== ""))
             .map(s => ":{\n" + s + "\n:}\n")            // in case of multi-line selection
             .map(s => {
-                if (terminal.map(t => t.name).contains("GHCi")) {
-                    terminal.unwrap().sendText(s);
-                } else {
-                    let term = vscode.window.createTerminal("GHCi");
-                    term.sendText(config.ghciTool(project));     // we're not loading the file here
-                    term.sendText(s);
-                    term.show();
-                }
+                const term = terminal.flatmap(option.filterOption(t => t.name === "GHCi"))
+                    .or(util.getTermOption("GHCi")).map(term => () => term).orelse(() => {
+                        let term = util.getTermOption("GHCi").orelse(vscode.window.createTerminal("GHCi"));
+                        term.sendText(config.ghciTool(project));     // we're not loading the file here
+                        return term;
+                    })();
+                term.sendText(s);
+                term.show();
             })
     );
     context.subscriptions.push(sendGhci);
-    
+
     // button for ghci
     util.resgisterStatButton(context, "Load GHCi", "runner2.ghci");
     // button for stack project
     switch (project) {
-        case 'stack':
+        case "stack":
             // setup commands
             util.registerSimplTerm(context, "runner2.stacktest", "Stack Test", config.stackPath + " test");
             util.registerSimplTerm(context, "runner2.stackbuild", "Stack Build", config.stackPath + " build");

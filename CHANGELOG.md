@@ -9,6 +9,8 @@ All notable changes to the *Haskell Runner 2* will be documented in this file.
 ## [0.2.2]
 
 - added `cabal repl` support in cabal project
+- extension starts on a `cabal` file
+- able to reuse terminal
 
 ## [0.2.1]
 

@@ -21,9 +21,9 @@ export function getConfig(): Config {
         switch (mode) {
             case "default":
                 switch (proj) {
-                    case 'none': return ghci;
-                    case 'stack': return stack + " repl";
-                    case 'cabal': return cabal + " repl";
+                    case "none": return ghci;
+                    case "stack": return stack + " repl";
+                    case "cabal": return cabal + " repl";
                 }
             case "ghci": return ghci;
             case "stack": return stack + " repl";
