@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as option from './option';
 
-// get/new terminal
+// get terminal
 export function getTermOption(name: string): option.Option<vscode.Terminal> {
     let idx = vscode.window.terminals.findIndex((term) => term.name === name);
     if (idx === -1) {

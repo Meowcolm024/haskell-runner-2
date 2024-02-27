@@ -7,13 +7,13 @@ All notable changes to the *Haskell Runner 2* will be documented in this file.
 ## [0.3.0]
 
 - **!! config and command name changes !!**
-- reuse terminals by default
-- added `cabal repl/build/test` support in cabal projects
+- reuse terminal by default
+- added `cabal repl/build/test` support in cabal project
 - extension now starts on a `*.cabal` file
 
 ## [0.2.1]
 
-- fix potential path issue in Windows
+- fix potential path issue on Windows
 
 ## [0.2.0]
 

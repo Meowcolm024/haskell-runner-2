@@ -17,7 +17,7 @@ export async function activate(context: vscode.ExtensionContext) {
     // update config
     vscode.workspace.onDidChangeConfiguration(e => { config = conf.getConfig(); });
     // check stack/cabal project
-    let hasConf = async (f: string) => (await vscode.workspace.findFiles(f)).length > 0;
+    const hasConf = async (f: string) => (await vscode.workspace.findFiles(f)).length > 0;
     let project: conf.ProjectTy = (await hasConf("stack.yaml")) ? "stack" : (await hasConf("*.cabal") ? "cabal" : "none");
     let inproject = project !== "none";
 
@@ -31,9 +31,15 @@ export async function activate(context: vscode.ExtensionContext) {
         // currently at GHCi
         const term = terminal.flatmap(option.filterOption(t => t.name === "GHCi"))
             .or(util.getTermOption("GHCi")).map(term => () => {
-                filename
-                    .map(f => f.split("\\").join("\\\\"))   // windows path may contain backslash
-                    .map(f => term.sendText(inproject ? ":r" : (":l " + f)));
+                if (inproject) {
+                    term.sendText(":r");    // reload modules in project
+                } else {
+                    filename
+                        .map(f => f.split("\\").join("\\\\"))   // windows path may contain backslash
+                        .map(f => () => term.sendText(":l " + f))
+                        .orelse(() => vscode.window.showInformationMessage(
+                            "Cannot load a non-Haskell file to GHCi"))();
+                }
                 return term;
             }).orelse(() => {
                 let term = vscode.window.createTerminal("GHCi");
@@ -53,7 +59,9 @@ export async function activate(context: vscode.ExtensionContext) {
             .map(s => ":{\n" + s + "\n:}\n")            // in case of multi-line selection
             .map(s => {
                 const term = terminal.flatmap(option.filterOption(t => t.name === "GHCi"))
-                    .or(util.getTermOption("GHCi")).map(term => () => term).orelse(() => {
+                    .or(util.getTermOption("GHCi"))
+                    .map(term => () => term)
+                    .orelse(() => {
                         let term = vscode.window.createTerminal("GHCi");
                         term.sendText(config.ghciTool(project));     // we're not loading the file here
                         return term;
@@ -88,9 +96,9 @@ export async function activate(context: vscode.ExtensionContext) {
             setupProject("Cabal", config.cabalPath);
             break;
         case "none": // default behavior
-            util.registerPrompt(context, "runner2.hstest", "Not in a stack/cabal project!");
-            util.registerPrompt(context, "runner2.hsbuild", "Not in a stack/cabal project!");
-            util.registerPrompt(context, "runner2.hsrun", "Not in a stack/cabal project!");
+            util.registerPrompt(context, "runner2.hstest", "Not in a stack or cabal project!");
+            util.registerPrompt(context, "runner2.hsbuild", "Not in a stack or cabal project!");
+            util.registerPrompt(context, "runner2.hsrun", "Not in a stack or cabal project!");
             break;
     }
 
