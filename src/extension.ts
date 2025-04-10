@@ -12,12 +12,23 @@ var terminal: Map<string, vscode.Terminal> = new Map();
 
 // I'm not sure if we can do `async` here
 export async function activate(context: vscode.ExtensionContext) {
-    // update config
-    vscode.workspace.onDidChangeConfiguration(e => { config = conf.getConfig(); });
     // check stack/cabal project
     const hasConf = async (f: string) => (await vscode.workspace.findFiles(f)).length > 0;
     let project: conf.ProjectTy = (await hasConf("stack.yaml")) ? "stack" : (await hasConf("*.cabal") ? "cabal" : "none");
     let inproject = project !== "none";
+    // update config
+    vscode.workspace.onDidChangeConfiguration(e => {
+        config = conf.getConfig();
+        if (config.showRun) {
+            switch (project) {
+                case 'stack':
+                    return util.resgisterStatButton(context, "Stack Run", "runner2.hsrun");
+                case 'cabal':
+                    return util.resgisterStatButton(context, "Cabal Run", "runner2.hsrun");
+                default: return;
+            }
+        }
+    });
 
     // GHCi command
     const ghci = vscode.commands.registerCommand("runner2.ghci", () => {
