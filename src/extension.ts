@@ -9,8 +9,6 @@ import * as util from './util';
 var config: conf.Config = conf.getConfig();
 // map of saved terminals of current session
 var terminal: Map<string, vscode.Terminal> = new Map();
-// stack run button already initialized
-var stackRunBtn: boolean = false;
 
 // I'm not sure if we can do `async` here
 export async function activate(context: vscode.ExtensionContext) {
@@ -18,20 +16,11 @@ export async function activate(context: vscode.ExtensionContext) {
     const hasConf = async (f: string) => (await vscode.workspace.findFiles(f)).length > 0;
     let project: conf.ProjectTy = (await hasConf("stack.yaml")) ? "stack" : (await hasConf("*.cabal") ? "cabal" : "none");
     let inproject = project !== "none";
+
     // update config
+    // ? I'm not sure if it is useful or not
     vscode.workspace.onDidChangeConfiguration(e => {
         config = conf.getConfig();
-        if (config.showRun && !stackRunBtn) {
-            switch (project) {
-                case 'stack':
-                    stackRunBtn = true;
-                    return util.resgisterStatButton(context, "Stack Run", "runner2.hsrun");
-                case 'cabal':
-                    stackRunBtn = true;
-                    return util.resgisterStatButton(context, "Cabal Run", "runner2.hsrun");
-                default: return;
-            }
-        }
     });
 
     // GHCi command
@@ -73,7 +62,7 @@ export async function activate(context: vscode.ExtensionContext) {
             .map(s => ":{\n" + s + "\n:}\n")            // in case of multi-line selection
             .map(s => {
                 const term = util.getTermOption(terminal, "GHCi")
-                    .map(term => () => { console.log(term.exitStatus, term.state); return term; })
+                    .map(term => () => term)
                     .orelse(() => {
                         let term = vscode.window.createTerminal("GHCi");
                         term.sendText(config.ghciTool(project));     // we're not loading the file here
@@ -98,7 +87,6 @@ export async function activate(context: vscode.ExtensionContext) {
         util.resgisterStatButton(context, project + " Build", "runner2.hsbuild");
         util.resgisterStatButton(context, project + " Test", "runner2.hstest");
         if (config.showRun) {
-            stackRunBtn = true;
             util.resgisterStatButton(context, project + " Run", "runner2.hsrun");
         }
     };

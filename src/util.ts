@@ -44,7 +44,6 @@ export function registerSimplTerm(
             })();
         term.sendText(cmd);
         term.show();
-
     }));
 }
 
