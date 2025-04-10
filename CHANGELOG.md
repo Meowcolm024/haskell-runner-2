@@ -6,7 +6,7 @@ All notable changes to the *Haskell Runner 2* will be documented in this file.
 
 - nil
 
-## [0.4.0] (not yet released)
+## [0.4.0] (Ureleased)
 
 - avoid reusing recovered terminal at startup by keeping track of active terminals created by Haskell Runner 2
 - `Stack Run` button can now be hot loaded, but disabling still requires reload

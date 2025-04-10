@@ -9,6 +9,8 @@ import * as util from './util';
 var config: conf.Config = conf.getConfig();
 // map of saved terminals of current session
 var terminal: Map<string, vscode.Terminal> = new Map();
+// stack run button already initialized
+var stackRunBtn: boolean = false;
 
 // I'm not sure if we can do `async` here
 export async function activate(context: vscode.ExtensionContext) {
@@ -19,11 +21,13 @@ export async function activate(context: vscode.ExtensionContext) {
     // update config
     vscode.workspace.onDidChangeConfiguration(e => {
         config = conf.getConfig();
-        if (config.showRun) {
+        if (config.showRun && !stackRunBtn) {
             switch (project) {
                 case 'stack':
+                    stackRunBtn = true;
                     return util.resgisterStatButton(context, "Stack Run", "runner2.hsrun");
                 case 'cabal':
+                    stackRunBtn = true;
                     return util.resgisterStatButton(context, "Cabal Run", "runner2.hsrun");
                 default: return;
             }
@@ -40,7 +44,6 @@ export async function activate(context: vscode.ExtensionContext) {
         // currently at GHCi
         const term = util.getTermOption(terminal, "GHCi")
             .map(term => () => {
-                console.log(term.exitStatus, term.state);
                 if (inproject) {
                     term.sendText(":r");    // reload modules in project
                 } else {
@@ -95,6 +98,7 @@ export async function activate(context: vscode.ExtensionContext) {
         util.resgisterStatButton(context, project + " Build", "runner2.hsbuild");
         util.resgisterStatButton(context, project + " Test", "runner2.hstest");
         if (config.showRun) {
+            stackRunBtn = true;
             util.resgisterStatButton(context, project + " Run", "runner2.hsrun");
         }
     };
