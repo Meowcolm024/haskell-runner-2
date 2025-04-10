@@ -1,5 +1,5 @@
 export interface Option<T> {
-    isEmpty: boolean;
+    readonly isEmpty: boolean;
     unwrap(this: Option<T>): T;
     map<U>(this: Option<T>, f: (a: T) => U): Option<U>;
     flatmap<U>(this: Option<T>, f: (a: T) => Option<U>): Option<U>;
@@ -10,13 +10,13 @@ export interface Option<T> {
 
 class Some<T> implements Option<T> {
     private value: T;
-    isEmpty: boolean;
+    readonly isEmpty: boolean;
     constructor(value: T) {
         this.value = value;
         this.isEmpty = false;
     }
     unwrap(this: Some<T>): T { return this.value; }
-    map<U>(this: Some<T>, f: (a: T) => U): Option<U> {
+    map<U>(this: Some<T>, f: (a: T) => U): Some<U> {
         return new Some(f(this.value));
     }
     flatmap<U>(this: Some<T>, f: (a: T) => Option<U>): Option<U> {
@@ -34,15 +34,15 @@ class Some<T> implements Option<T> {
 }
 
 class None implements Option<never> {
-    isEmpty: boolean;
+    readonly isEmpty: boolean;
     constructor() {
         this.isEmpty = true;
     }
     unwrap(this: None): never { throw new Error(); }
-    map<U>(this: None, f: (a: never) => U): Option<U> {
+    map(this: None, f: (a: never) => any): None {
         return new None;
     }
-    flatmap<U>(this: None, f: (a: never) => Option<U>): Option<U> {
+    flatmap(this: None, f: (a: never) => Option<any>): None {
         return new None;
     }
     contains(this: None, e: any): boolean {
@@ -64,11 +64,11 @@ export function option<T>(u: T | undefined): Option<T> {
     }
 }
 
-export function some<T>(u: T): Option<T> {
+export function some<T>(u: T): Some<T> {
     return new Some(u);
 }
 
-export function none<T>(): Option<T> {
+export function none(): None {
     return new None;
 }
 

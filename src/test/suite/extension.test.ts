@@ -22,4 +22,13 @@ suite('Extension Test Suite', () => {
             option.some(`:l "C:\\\\hello\\\\world.hs"`)
         );
     });
+
+    test('option test', () => {
+        assert.strictEqual(
+            option.none().contains(1), false
+        );
+        assert.strictEqual(
+            option.some(1).contains(1), true
+        );
+    });
 });

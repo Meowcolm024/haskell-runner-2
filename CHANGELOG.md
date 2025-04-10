@@ -4,6 +4,13 @@ All notable changes to the *Haskell Runner 2* will be documented in this file.
 
 ## [Unreleased]
 
+- nil
+
+## [0.4.0]
+
+- avoid reusing recovered terminal at startup by keeping track of active terminals created by Haskell Runner 2
+- remove activate on `Cabal` language
+
 ## [0.3.0]
 
 - **!! config and command name changes !!**

@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
 import * as option from './option';
 
-// get terminal
-export function getTermOption(name: string): option.Option<vscode.Terminal> {
-    let idx = vscode.window.terminals.findIndex((term) => term.name === name);
-    if (idx === -1) {
-        return option.none();
+// get active terminal
+export function getTermOption(terminal: Map<string, vscode.Terminal>, name: string): option.Option<vscode.Terminal> {
+    let term = terminal.get(name);
+    if (term !== undefined && term.exitStatus === undefined) {
+        return option.some(term);
     } else {
-        return option.some(vscode.window.terminals[idx]);
+        return option.none();
     }
 }
 
@@ -29,16 +29,22 @@ export function resgisterStatButton(
 // create a terminal and send command
 export function registerSimplTerm(
     context: vscode.ExtensionContext,
+    terminal: Map<string, vscode.Terminal>,
     command: string,
     name: string,
     cmd: string
 ) {
     context.subscriptions.push(vscode.commands.registerCommand(command, () => {
-        let term = getTermOption(name)
-            .map(t => () => t)  // new terminal need to be created lazily
-            .orelse(() => vscode.window.createTerminal(name))();    
+        let term = getTermOption(terminal, name)
+            .map(t => () => t)
+            .orelse(() => {
+                let term = vscode.window.createTerminal(name);
+                terminal.set(name, term);
+                return term;
+            })();
         term.sendText(cmd);
         term.show();
+
     }));
 }
 

@@ -7,13 +7,11 @@ import * as util from './util';
 
 // configuration
 var config: conf.Config = conf.getConfig();
-// current terminal
-var terminal: option.Option<vscode.Terminal> = option.none();
+// map of saved terminals of current session
+var terminal: Map<string, vscode.Terminal> = new Map();
 
 // I'm not sure if we can do `async` here
 export async function activate(context: vscode.ExtensionContext) {
-    // setup terminal
-    vscode.window.onDidChangeActiveTerminal(e => { terminal = option.option(e); });
     // update config
     vscode.workspace.onDidChangeConfiguration(e => { config = conf.getConfig(); });
     // check stack/cabal project
@@ -29,8 +27,9 @@ export async function activate(context: vscode.ExtensionContext) {
             .flatmap(option.filterOption(util.isHaskell))
             .map(s => `\"${s.fileName}\"`);
         // currently at GHCi
-        const term = terminal.flatmap(option.filterOption(t => t.name === "GHCi"))
-            .or(util.getTermOption("GHCi")).map(term => () => {
+        const term = util.getTermOption(terminal, "GHCi")
+            .map(term => () => {
+                console.log(term.exitStatus, term.state);
                 if (inproject) {
                     term.sendText(":r");    // reload modules in project
                 } else {
@@ -44,6 +43,7 @@ export async function activate(context: vscode.ExtensionContext) {
             }).orelse(() => {
                 let term = vscode.window.createTerminal("GHCi");
                 term.sendText(config.ghciTool(project) + " " + (inproject ? "" : filename.orelse("")));
+                terminal.set("GHCi", term);
                 return term;
             });
         term().show();
@@ -58,12 +58,12 @@ export async function activate(context: vscode.ExtensionContext) {
             .flatmap(option.filterOption(x => x.trim() !== ""))
             .map(s => ":{\n" + s + "\n:}\n")            // in case of multi-line selection
             .map(s => {
-                const term = terminal.flatmap(option.filterOption(t => t.name === "GHCi"))
-                    .or(util.getTermOption("GHCi"))
-                    .map(term => () => term)
+                const term = util.getTermOption(terminal, "GHCi")
+                    .map(term => () => { console.log(term.exitStatus, term.state); return term; })
                     .orelse(() => {
                         let term = vscode.window.createTerminal("GHCi");
                         term.sendText(config.ghciTool(project));     // we're not loading the file here
+                        terminal.set("GHCi", term);
                         return term;
                     })();
                 term.sendText(s);
@@ -77,9 +77,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
     const setupProject = (project: string, path: string) => {
         // setup commands
-        util.registerSimplTerm(context, "runner2.hstest", project + " Test", path + " test");
-        util.registerSimplTerm(context, "runner2.hsbuild", project + " Build", path + " build");
-        util.registerSimplTerm(context, "runner2.hsrun", project + " Run", path + " run");
+        util.registerSimplTerm(context, terminal, "runner2.hstest", project + " Test", path + " test");
+        util.registerSimplTerm(context, terminal, "runner2.hsbuild", project + " Build", path + " build");
+        util.registerSimplTerm(context, terminal, "runner2.hsrun", project + " Run", path + " run");
         // setup buttons
         util.resgisterStatButton(context, project + " Build", "runner2.hsbuild");
         util.resgisterStatButton(context, project + " Test", "runner2.hstest");
