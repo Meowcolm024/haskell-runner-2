@@ -14,7 +14,6 @@ export async function activate(context: vscode.ExtensionContext) {
     // check stack/cabal project
     const hasConf = async (f: string) => (await vscode.workspace.findFiles(f)).length > 0;
     let project: conf.ProjectTy = (await hasConf("stack.yaml")) ? "stack" : (await hasConf("*.cabal") ? "cabal" : "none");
-    let inproject = project !== "none";
 
     // update config
     // ? I'm not sure if it is useful or not
@@ -29,7 +28,7 @@ export async function activate(context: vscode.ExtensionContext) {
             const filename = JSON.stringify(document.uri.fsPath);
             const { term, isNew } = await util.getTermOrNew(terminal, "GHCi", config.ghciTool(project));
             term.show();
-            if (!inproject) {
+            if (project === "none") {
                 term.sendText(":l " + filename);
             } else if (!isNew) {
                 term.sendText(":r");

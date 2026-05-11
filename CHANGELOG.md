@@ -4,6 +4,8 @@ All notable changes to the *Haskell Runner 2* will be documented in this file.
 
 ## [Unreleased]
 
+## [0.5.0]
+
 - now requires shell integration to be enabled for the extension to work
 - major refactor to the codebase
 
