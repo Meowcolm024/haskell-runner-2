@@ -3,7 +3,6 @@ import * as assert from 'assert';
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
 import * as vscode from 'vscode';
-import * as option from '../option';
 // import * as myExtension from '../../extension';
 
 suite('Extension Test Suite', () => {
@@ -14,12 +13,4 @@ suite('Extension Test Suite', () => {
         assert.strictEqual(-1, [1, 2, 3].indexOf(0));
     });
 
-    test('option test', () => {
-        assert.strictEqual(
-            option.none().contains(1), false
-        );
-        assert.strictEqual(
-            option.some(1).contains(1), true
-        );
-    });
 });

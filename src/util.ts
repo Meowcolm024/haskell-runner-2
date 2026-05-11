@@ -1,13 +1,21 @@
 import * as vscode from 'vscode';
-import * as option from './option';
 
-// get active terminal
-export function getTermOption(terminal: Map<string, vscode.Terminal>, name: string): option.Option<vscode.Terminal> {
+export async function getTermOrNew(
+    terminal: Map<string, vscode.Terminal>,
+    name: string,
+    cmd: string | undefined = undefined
+): Promise<{ term: vscode.Terminal, isNew: boolean }> {
     let term = terminal.get(name);
     if (term !== undefined && term.exitStatus === undefined) {
-        return option.some(term);
+        return { term: term, isNew: false };
     } else {
-        return option.none();
+        const term = vscode.window.createTerminal(name);
+        terminal.set(name, term);
+        if (cmd) {
+            const shell = await waitShellIntegration(term);
+            shell.executeCommand(cmd);
+        }
+        return { term: term, isNew: true };
     }
 }
 
@@ -35,16 +43,12 @@ export function registerSimplTerm(
     cmd: string
 ) {
     context.subscriptions.push(vscode.commands.registerCommand(command, async () => {
-        const term = getTermOption(terminal, name)
-            .map(t => () => t)
-            .orelse(() => {
-                let term = vscode.window.createTerminal(name);
-                terminal.set(name, term);
-                return term;
-            })();
-        const shell = await waitShellIntegration(term);
+        let { term, isNew } = await getTermOrNew(terminal, name, cmd);
         term.show();
-        shell.executeCommand(cmd);
+        if (!isNew) {
+            const shell = await waitShellIntegration(term);
+            shell.executeCommand(cmd);
+        }
     }));
 }
 

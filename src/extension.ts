@@ -1,7 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import * as option from './option';
 import * as conf from './config';
 import * as util from './util';
 
@@ -25,55 +24,34 @@ export async function activate(context: vscode.ExtensionContext) {
 
     // GHCi command
     const ghci = vscode.commands.registerCommand("runner2.ghci", async () => {
-        // get current file name
-        const filename = option.option(vscode.window.activeTextEditor)
-            .map(e => e.document)
-            .flatmap(option.filterOption(util.isHaskell))
-            .map(s => JSON.stringify(s.uri.fsPath));
-        // currently at GHCi
-        const termThunk = util.getTermOption(terminal, "GHCi")
-            .map(term => async () => {
-                if (inproject) {
-                    term.sendText(":r");    // reload modules in project
-                } else {
-                    filename
-                        .map(f => () => term.sendText(":l " + f))
-                        .orelse(() => vscode.window.showInformationMessage(
-                            "Cannot load a non-Haskell file to GHCi"))();
-                }
-                return term;
-            }).orelse(async () => {
-                let term = vscode.window.createTerminal("GHCi");
-                terminal.set("GHCi", term);
-                const shell = await util.waitShellIntegration(term);
-                shell.executeCommand(config.ghciTool(project) + (inproject ? "" : " " + filename.orelse("")));
-                return term;
-            });
-        const term = await termThunk();
-        term.show();
+        const document = vscode.window.activeTextEditor?.document;
+        if (document && util.isHaskell(document)) {
+            const filename = JSON.stringify(document.uri.fsPath);
+            const { term, isNew } = await util.getTermOrNew(terminal, "GHCi", config.ghciTool(project));
+            term.show();
+            if (!inproject) {
+                term.sendText(":l " + filename);
+            } else if (!isNew) {
+                term.sendText(":r");
+            }
+        } else {
+            vscode.window.showInformationMessage("Cannot load a non-Haskell file to GHCi");
+        }
     });
     context.subscriptions.push(ghci);
 
     // send selected code to GHCi
-    const sendGhci = vscode.commands.registerCommand("runner2.sendGhci", () =>
-        option.option(vscode.window.activeTextEditor)
-            .map(e => e.document.getText(
-                new vscode.Range(e.selection.start, e.selection.end)))
-            .flatmap(option.filterOption(x => x.trim() !== ""))
-            .map(s => ":{\n" + s + "\n:}\n")            // in case of multi-line selection
-            .map(s => {
-                const term = util.getTermOption(terminal, "GHCi")
-                    .map(term => () => term)
-                    .orelse(() => {
-                        let term = vscode.window.createTerminal("GHCi");
-                        term.sendText(config.ghciTool(project));     // we're not loading the file here
-                        terminal.set("GHCi", term);
-                        return term;
-                    })();
-                term.sendText(s);
-                term.show();
-            })
-    );
+    const sendGhci = vscode.commands.registerCommand("runner2.sendGhci", async () => {
+        const editor = vscode.window.activeTextEditor;
+        const selected = editor?.document.getText(editor.selection);
+        const { term, isNew: _ } = await util.getTermOrNew(terminal, "GHCi", config.ghciTool(project));
+        if (selected) {
+            term.show();
+            term.sendText(":{\n" + selected + "\n:}\n");
+        } else {
+            vscode.window.showInformationMessage("Nothing to send to GHCi");
+        }
+    });
     context.subscriptions.push(sendGhci);
 
     // button for ghci
