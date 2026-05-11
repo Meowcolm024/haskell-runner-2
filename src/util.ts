@@ -34,16 +34,17 @@ export function registerSimplTerm(
     name: string,
     cmd: string
 ) {
-    context.subscriptions.push(vscode.commands.registerCommand(command, () => {
-        let term = getTermOption(terminal, name)
+    context.subscriptions.push(vscode.commands.registerCommand(command, async () => {
+        const term = getTermOption(terminal, name)
             .map(t => () => t)
             .orelse(() => {
                 let term = vscode.window.createTerminal(name);
                 terminal.set(name, term);
                 return term;
             })();
-        term.sendText(cmd);
+        const shell = await waitShellIntegration(term);
         term.show();
+        shell.executeCommand(cmd);
     }));
 }
 
@@ -61,4 +62,21 @@ export function registerPrompt(
 // is a haskell file
 export function isHaskell(text: vscode.TextDocument): boolean {
     return text.languageId === 'haskell' || text.languageId === 'literate haskell';
+}
+
+export async function waitShellIntegration(
+    terminal: vscode.Terminal
+): Promise<vscode.TerminalShellIntegration> {
+    if (terminal.shellIntegration) {
+        return terminal.shellIntegration;
+    }
+    return new Promise<vscode.TerminalShellIntegration>((resolve) => {
+        const disposable =
+            vscode.window.onDidChangeTerminalShellIntegration(e => {
+                if (e.terminal === terminal && terminal.shellIntegration) {
+                    disposable.dispose();
+                    resolve(terminal.shellIntegration);
+                }
+            });
+    });
 }

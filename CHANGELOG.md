@@ -4,7 +4,8 @@ All notable changes to the *Haskell Runner 2* will be documented in this file.
 
 ## [Unreleased]
 
-- small fix for path
+- **!! now requires shell integration to work**
+- small fix for path escape
 
 ## [0.4.0]
 

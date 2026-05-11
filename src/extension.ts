@@ -24,15 +24,15 @@ export async function activate(context: vscode.ExtensionContext) {
     });
 
     // GHCi command
-    const ghci = vscode.commands.registerCommand("runner2.ghci", () => {
+    const ghci = vscode.commands.registerCommand("runner2.ghci", async () => {
         // get current file name
-        let filename = option.option(vscode.window.activeTextEditor)
+        const filename = option.option(vscode.window.activeTextEditor)
             .map(e => e.document)
             .flatmap(option.filterOption(util.isHaskell))
-            .map(s => s.uri.fsPath);
+            .map(s => JSON.stringify(s.uri.fsPath));
         // currently at GHCi
-        const term = util.getTermOption(terminal, "GHCi")
-            .map(term => () => {
+        const termThunk = util.getTermOption(terminal, "GHCi")
+            .map(term => async () => {
                 if (inproject) {
                     term.sendText(":r");    // reload modules in project
                 } else {
@@ -42,13 +42,15 @@ export async function activate(context: vscode.ExtensionContext) {
                             "Cannot load a non-Haskell file to GHCi"))();
                 }
                 return term;
-            }).orelse(() => {
+            }).orelse(async () => {
                 let term = vscode.window.createTerminal("GHCi");
-                term.sendText(config.ghciTool(project) + " " + (inproject ? "" : filename.orelse("")));
                 terminal.set("GHCi", term);
+                const shell = await util.waitShellIntegration(term);
+                shell.executeCommand(config.ghciTool(project) + (inproject ? "" : " " + filename.orelse("")));
                 return term;
             });
-        term().show();
+        const term = await termThunk();
+        term.show();
     });
     context.subscriptions.push(ghci);
 
