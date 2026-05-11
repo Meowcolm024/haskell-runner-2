@@ -29,7 +29,7 @@ export async function activate(context: vscode.ExtensionContext) {
         let filename = option.option(vscode.window.activeTextEditor)
             .map(e => e.document)
             .flatmap(option.filterOption(util.isHaskell))
-            .map(s => `\"${s.fileName}\"`);
+            .map(s => s.uri.fsPath);
         // currently at GHCi
         const term = util.getTermOption(terminal, "GHCi")
             .map(term => () => {
@@ -37,7 +37,6 @@ export async function activate(context: vscode.ExtensionContext) {
                     term.sendText(":r");    // reload modules in project
                 } else {
                     filename
-                        .map(f => f.split("\\").join("\\\\"))   // windows path may contain backslash
                         .map(f => () => term.sendText(":l " + f))
                         .orelse(() => vscode.window.showInformationMessage(
                             "Cannot load a non-Haskell file to GHCi"))();

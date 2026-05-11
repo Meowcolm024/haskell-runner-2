@@ -3,7 +3,7 @@
     "displayName": "Haskell Runner 2",
     "description": "Shortcut for GHCi and Stack",
     "publisher": "Meowcolm024",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "license": "BSD3",
     "icon": "images/hr2.png",
     "engines": {
@@ -105,13 +105,13 @@
         },
         "keybindings": [
             {
-              "command": "runner2.sendGhci",
-              "key": "ctrl+alt+right",
-              "mac": "ctrl+alt+right",
-              "linux": "ctrl+alt+right",
-              "when": "resourceLangId == haskell"
+                "command": "runner2.sendGhci",
+                "key": "ctrl+alt+right",
+                "mac": "ctrl+alt+right",
+                "linux": "ctrl+alt+right",
+                "when": "resourceLangId == haskell"
             }
-          ]
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
@@ -122,16 +122,16 @@
         "test": "node ./out/test/runTest.js"
     },
     "devDependencies": {
-        "@types/vscode": "^1.72.0",
         "@types/glob": "^7.2.0",
         "@types/mocha": "^9.1.0",
         "@types/node": "14.x",
+        "@types/vscode": "^1.72.0",
         "@typescript-eslint/eslint-plugin": "^5.16.0",
         "@typescript-eslint/parser": "^5.16.0",
+        "@vscode/test-electron": "^2.1.3",
         "eslint": "^8.11.0",
         "glob": "^7.2.0",
-        "mocha": "^9.2.2",
-        "typescript": "^4.5.5",
-        "@vscode/test-electron": "^2.1.3"
+        "mocha": "^11.3.0",
+        "typescript": "^4.5.5"
     }
 }

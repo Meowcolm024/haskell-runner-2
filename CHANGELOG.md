@@ -4,7 +4,7 @@ All notable changes to the *Haskell Runner 2* will be documented in this file.
 
 ## [Unreleased]
 
-- nil
+- small fix for path
 
 ## [0.4.0]
 
