@@ -9,14 +9,10 @@ var config: conf.Config = conf.getConfig();
 // map of saved terminals of current session
 var terminal: Map<string, vscode.Terminal> = new Map();
 
-// I'm not sure if we can do `async` here
 export async function activate(context: vscode.ExtensionContext) {
-    // check stack/cabal project
-    const hasConf = async (f: string) => (await vscode.workspace.findFiles(f)).length > 0;
-    let project: conf.ProjectTy = (await hasConf("stack.yaml")) ? "stack" : (await hasConf("*.cabal") ? "cabal" : "none");
+    const project = await util.getProject();
 
-    // update config
-    // ? I'm not sure if it is useful or not
+    // update config, I'm not sure if it is useful or not
     vscode.workspace.onDidChangeConfiguration(e => {
         config = conf.getConfig();
     });
@@ -43,10 +39,10 @@ export async function activate(context: vscode.ExtensionContext) {
     const sendGhci = vscode.commands.registerCommand("runner2.sendGhci", async () => {
         const editor = vscode.window.activeTextEditor;
         const selected = editor?.document.getText(editor.selection);
-        const { term, isNew: _ } = await util.getTermOrNew(terminal, "GHCi", config.ghciTool(project));
-        if (selected) {
+        const { term, isNew } = await util.getTermOrNew(terminal, "GHCi", config.ghciTool(project));
+        if (selected && selected.trim().length > 0) {
             term.show();
-            term.sendText(":{\n" + selected + "\n:}\n");
+            term.sendText(":{\n" + selected + "\n:}");
         } else {
             vscode.window.showInformationMessage("Nothing to send to GHCi");
         }
@@ -82,7 +78,6 @@ export async function activate(context: vscode.ExtensionContext) {
             util.registerPrompt(context, "runner2.hsrun", "Not in a stack or cabal project!");
             break;
     }
-
 }
 
 // this method is called when your extension is deactivated

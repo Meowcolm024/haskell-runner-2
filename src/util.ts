@@ -1,11 +1,12 @@
 import * as vscode from 'vscode';
+import * as conf from './config';
 
 export async function getTermOrNew(
     terminal: Map<string, vscode.Terminal>,
     name: string,
     cmd: string | undefined = undefined
 ): Promise<{ term: vscode.Terminal, isNew: boolean }> {
-    let term = terminal.get(name);
+    const term = terminal.get(name);
     if (term !== undefined && term.exitStatus === undefined) {
         return { term: term, isNew: false };
     } else {
@@ -43,7 +44,7 @@ export function registerSimplTerm(
     cmd: string
 ) {
     context.subscriptions.push(vscode.commands.registerCommand(command, async () => {
-        let { term, isNew } = await getTermOrNew(terminal, name, cmd);
+        const { term, isNew } = await getTermOrNew(terminal, name, cmd);
         term.show();
         if (!isNew) {
             const shell = await waitShellIntegration(term);
@@ -66,6 +67,17 @@ export function registerPrompt(
 // is a haskell file
 export function isHaskell(text: vscode.TextDocument): boolean {
     return text.languageId === 'haskell' || text.languageId === 'literate haskell';
+}
+
+// get project type
+export async function getProject(): Promise<conf.ProjectTy> {
+    if (await vscode.workspace.findFiles("stack.yaml")) {
+        return "stack";
+    } else if (await vscode.workspace.findFiles("*.cabal")) {
+        return "cabal";
+    } else {
+        return "none";
+    }
 }
 
 export async function waitShellIntegration(
